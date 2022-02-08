@@ -14,10 +14,11 @@ def get_random_username(length):
     return ''.join(name_list)
 
 async def run_battle():
-    client1_name = get_random_username(16)
-    client2_name = get_random_username(16)
-    client1 = Client(client1_name, client2_name, False, 'null', 'gen1randombattle')
-    client2 = Client(client2_name, client1_name, True, 'null', 'gen1randombattle')
+    bot_name = get_random_username(16)
+    client1_name = bot_name + '_1'
+    client2_name = bot_name + '_2'
+    client1 = Client(client1_name, client2_name, True, 'null', 'gen1randombattle')
+    client2 = Client(client2_name, client1_name, False, 'null', 'gen1randombattle')
     url = r'ws://localhost:8000/showdown/websocket'
     await asyncio.gather(
         client1.run(url),

@@ -9,7 +9,7 @@ level_regex = re.compile(r'L[1-9][0-9]?')
 
 @dataclass
 class Pokemon:
-    
+    pass
 
 class BattleSide:
     def __init__(self):

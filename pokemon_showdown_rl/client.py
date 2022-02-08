@@ -38,4 +38,7 @@ class Client:
         self.websocket = await websockets.connect(url)
         self.context.update_state(start)
         async for message in self.websocket:
-            await self.parse_websocket_message(message)
+            try:
+                await self.parse_websocket_message(message)
+            except websockets.ConnectionClosed:
+                return

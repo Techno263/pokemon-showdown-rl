@@ -3,6 +3,12 @@ from pokemon_showdown_rl.state.state import challengee, join_battle
 import json
 from pokemon_showdown_rl.util.logging import get_logger
 
+# User state
+# Player is logged in lobby room
+# If the player is the challenger, the player sends a challenge to the
+# opponent and moves to join battle state
+# If the player is the challengee, the player moves to challengee state
+
 async def handle(context, websocket, room_id, msg_type, msg_data):
     if msg_type == 'updateuser':
         logger = get_logger(context.username)

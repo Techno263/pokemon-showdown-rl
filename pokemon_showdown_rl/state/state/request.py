@@ -1,9 +1,14 @@
 import json
 import re
-from pokemon_showdown_rl.state.state import turn, user
+from pokemon_showdown_rl.state.state import turn, user, stop
 from pokemon_showdown_rl.showdown.pokemon import Pokemon
 from pokemon_showdown_rl.showdown.move import Move
 from pokemon_showdown_rl.util.logging import get_logger
+
+# Request state
+# Waits for request message from server
+# Indicates the player needs to take its turn
+# Moves to turn state
 
 async def handle(context, websocket, room_id, msg_type, msg_data):
     logger = get_logger(context.username)
@@ -30,3 +35,5 @@ async def handle(context, websocket, room_id, msg_type, msg_data):
             context.action = 'wait'
             wait = request['wait']
         context.update_state(turn)
+    elif msg_type == 'win':
+        context.update_state(stop)

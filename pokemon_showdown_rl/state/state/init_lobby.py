@@ -2,6 +2,10 @@ import aiohttp
 from pokemon_showdown_rl.state.state import user
 from pokemon_showdown_rl.util.logging import get_logger
 
+# Init lobby state
+# Uses challstr to create an unauthenticated account
+# Once logged in moves to user state
+
 async def get_assertion_no_auth(challstr, username):
     async with aiohttp.ClientSession() as session:
         async with session.post(
