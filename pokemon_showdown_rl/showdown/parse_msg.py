@@ -17,4 +17,21 @@ def parse_switch(msg_data):
     pokemon, details, hp_status = msg_data.split('|', 2)
     hp, status = hp_status.split(' ', 1)
     pokemon_position, pokemon_name = pokemon.split(': ', 1)
-    
+    species, *details = details.split(', ') 
+    shiny = False
+    gender = ''
+    level = 100
+    for detail in details:
+        if detail == 'shiny':
+            shiny = True
+        elif detail == 'M':
+            gender = 'M'
+        elif detail == 'F':
+            gender = 'F'
+        elif detail[0] == 'L':
+            level = int(detail[1:])
+    current_hp, max_hp = map(int, hp.split)
+    return (
+        pokemon_position, pokemon_name, species, shiny, gender, level,
+        current_hp, max_hp, status
+    )
