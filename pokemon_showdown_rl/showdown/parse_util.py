@@ -3,6 +3,11 @@ from pokemon_showdown_rl.showdown.gender import Gender
 
 level_regex = re.compile(r'L[1-9][0-9]?')
 
+def parse_user(user):
+    rank = user[0]
+    username = user[1:]
+    return rank, username
+
 def parse_pokemon(pokemon):
     pos, name = pokemon.split(':')
     player = pos[:2]

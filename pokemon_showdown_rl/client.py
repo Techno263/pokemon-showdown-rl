@@ -1,7 +1,6 @@
 import websockets
 from pokemon_showdown_rl.state.state import start
 from pokemon_showdown_rl.state.state_context import StateContext
-from pokemon_showdown_rl.util.logging import get_logger
 
 class Client:
     def __init__(self, username, opponent, challenger, team, battle_format):
@@ -41,4 +40,5 @@ class Client:
             try:
                 await self.parse_websocket_message(message)
             except websockets.ConnectionClosed:
-                return
+                break
+        self.websocket = None

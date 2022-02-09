@@ -9,8 +9,10 @@ from pokemon_showdown_rl.showdown.pokemon import Pokemon
 async def handle(context, websocket, room_id, msg_type, msg_data):
     logger = get_logger(context.username)
     if msg_type == 'turn':
-        logger.write(f'{context.room_id}|/choose default\n')
-        await websocket.send(f'{context.room_id}|/choose default')
+        #logger.write(f'{context.room_id}|/choose default\n')
+        #await websocket.send(f'{context.room_id}|/choose default')
+        logger.write(f'{context.room_id}|/choose\n')
+        await websocket.send(f'{context.room_id}|/choose')
         context.update_state(request)
     elif msg_type == 'move':
         # TODO: Update state based on move
@@ -41,7 +43,8 @@ async def handle(context, websocket, room_id, msg_type, msg_data):
     elif msg_type == '-miss':
         pass
     elif msg_type == '-damage':
-        context.battle.apply_damage(msg_data)
+        #context.battle.apply_damage(msg_data)
+        pass
     elif msg_type == '-heal':
         pass
     elif msg_type == '-sethp':
