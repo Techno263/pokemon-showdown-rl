@@ -20,12 +20,13 @@ class Room:
         elif msg_type == 'turn':
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'win':
+            # Do something to indicate the game is over
             pass
         elif msg_type == 'move':
             # TODO: Update state based on move
             pass
         elif msg_type == 'switch':
-            #context.battle.apply_switch(msg_data)
+            
             pass
         elif msg_type == 'drag':
             #context.battle.apply_drag(msg_data)

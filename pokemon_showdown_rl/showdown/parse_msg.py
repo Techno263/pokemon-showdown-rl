@@ -9,3 +9,12 @@ def parse_pm(msg_data):
 def parse_player(msg_data):
     player, username, avatar, rating = msg_data.split('|', 3)
     return player, username, avatar, rating
+
+def parse_move(msg_data):
+    pokemon, move, target = msg_data.split('|', 2)
+
+def parse_switch(msg_data):
+    pokemon, details, hp_status = msg_data.split('|', 2)
+    hp, status = hp_status.split(' ', 1)
+    pokemon_position, pokemon_name = pokemon.split(': ', 1)
+    
