@@ -1,4 +1,6 @@
-from pokemon_showdown_rl.showdown.parse_util import parse_user, parse_pokemon
+from pokemon_showdown_rl.showdown.parse_util import (
+    parse_user, parse_pokemon, parse_hp_status, parse_details
+)
 
 def parse_pm(msg_data):
     sender, receiver, msg = msg_data.split('|', 2)
@@ -10,28 +12,80 @@ def parse_player(msg_data):
     player, username, avatar, rating = msg_data.split('|', 3)
     return player, username, avatar, rating
 
+def parse_teamsize(msg_data):
+    player, teamsize = msg_data.split('|', 1)
+    return player, teamsize
+
+def parse_rule(msg_data):
+    rule, description = msg_data.split(': ', 1)
+    return rule, description
+
 def parse_move(msg_data):
     pokemon, move, target = msg_data.split('|', 2)
+    split_index = target.find('|')
+    if split_index >= 0:
+        tags = target[split_index+1:]
+        target = target[:split_index]
+    else:
+        tags = ''
+    player, position, name = parse_pokemon(pokemon)
+    target_player, target_position, target_name = parse_pokemon(target)
+    return (
+        player, position, name, move, target_player, target_position,
+        target_name, tags
+    )
 
 def parse_switch(msg_data):
     pokemon, details, hp_status = msg_data.split('|', 2)
-    hp, status = hp_status.split(' ', 1)
     player, position, name = parse_pokemon(pokemon)
-    species, *details = details.split(', ') 
-    shiny = False
-    gender = ''
-    level = 100
-    for detail in details:
-        if detail == 'shiny':
-            shiny = True
-        elif detail == 'M':
-            gender = 'M'
-        elif detail == 'F':
-            gender = 'F'
-        elif detail[0] == 'L':
-            level = int(detail[1:])
-    current_hp, max_hp = map(int, hp.split)
+    species, shiny, gender, level = parse_details(details)
+    current_hp, max_hp, status = parse_hp_status(hp_status)
     return (
-        player, position, name, species, shiny, gender, level,
-        current_hp, max_hp, status
+        player, position, name, species, shiny, gender, level, current_hp,
+        max_hp, status
     )
+
+def parse_drag(msg_data):
+    return parse_switch(msg_data)
+
+def parse_detailschange(msg_data):
+    return parse_switch(msg_data)
+
+def parse_replace(msg_data):
+    return parse_switch(msg_data)
+
+def parse_swap(msg_data):
+    pokemon, swap_position = msg_data.split('|', 1)
+    player, position, name = parse_pokemon(pokemon)
+    swap_position = int(swap_position)
+    return player, position, name, swap_position
+
+def parse_faint(msg_data):
+    player, position, name = parse_pokemon(msg_data)
+    return player, position, name
+
+def parse_formechange(msg_data):
+    pokemon, species, hp_status = msg_data.split('|', 2)
+    player, position, name = parse_pokemon(pokemon)
+    current_hp, max_hp, status = parse_hp_status(hp_status)
+    return player, position, name, species, current_hp, max_hp, status
+
+def parse_damage(msg_data):
+    pokemon, hp_status = msg_data.split('|', 1)
+    player, position, name = parse_pokemon(pokemon)
+    current_hp, max_hp, status = parse_hp_status(hp_status)
+    return player, position, name, current_hp, max_hp, status
+
+def parse_heal(msg_data):
+    return parse_damage(msg_data)
+
+def parse_sethp(msg_data):
+    pokemon, hp = msg_data.split('|', 1)
+    player, position, name = parse_pokemon(pokemon)
+    hp = int(hp)
+    return player, position, name, hp
+
+def parse_status(msg_data):
+    pokemon, status = msg_data.split('|', 1)
+    player, position, name = parse_pokemon(pokemon)
+    return player, position, name, status

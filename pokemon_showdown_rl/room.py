@@ -1,46 +1,58 @@
 from pokemon_showdown_rl.battle_context import BattleContext
-from pokemon_showdown_rl.state.battle_state import turn
 from pokemon_showdown_rl.showdown.parse_msg import parse_player
 
 class Room:
     def __init__(self, room_id, username, logger):
         self.room_id = room_id
         self.logger = logger
-        self.context = BattleContext(username, turn)
+        self.context = BattleContext(username, self.logger)
 
     async def handle_msg(self, websocket, msg_type, msg_data):
-        if msg_type == 'request':
+        if msg_type == 'title':
+            self.context.battle.apply_title(msg_data)
+        elif msg_type == 'request':
             self.context.apply_request(msg_data)
+        elif msg_type == 'gametype':
+            self.context.battle.apply_gametype(msg_type)
         elif msg_type == 'player':
             self.context.apply_player(msg_data)
+        elif msg_type == 'teamsize':
+            self.context.battle.apply_teamsize(msg_data)
+        elif msg_type == 'gen':
+            self.context.battle.apply_gen(msg_data)
+        elif msg_type == 'tier':
+            self.context.battle.apply_tier(msg_data)
+        elif msg_type == 'rule':
+            self.context.battle.apply_rule(msg_data)
         elif msg_type == 'turn':
-            # make an action
+            # TODO: choose an action
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'win':
             # Do something to indicate the game is over
             pass
         elif msg_type == 'move':
-            # TODO: Update state based on move
-            self.context.apply_move(msg_data)
+            self.context.battle.apply_move(msg_data)
         elif msg_type == 'switch':
-            self.context.a
+            self.context.battle.apply_switch(msg_data)
         elif msg_type == 'drag':
-            #context.battle.apply_drag(msg_data)
-            pass
-        elif msg_type == 'detailscahnge':
-            pass
+            self.context.battle.apply_drag(msg_data)
+        elif msg_type == 'detailschange':
+            self.context.battle.apply_detailschange(msg_data)
         elif msg_type == 'replace':
-            pass
+            self.context.battle.apply_replace(msg_data)
         elif msg_type == 'swap':
-            pass
+            self.context.battle.apply_swap(msg_data)
         elif msg_type == 'cant':
             pass
         elif msg_type == 'faint':
+            self.context.battle.apply_faint(msg_data)
+            # TODO: choose a new pokemon to switch to
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'error':
+            # TODO: handle error
             pass
         elif msg_type == '-formechange':
-            pass
+            self.context.battle.apply_formechange(msg_data)
         elif msg_type == '-block':
             pass
         elif msg_type == '-notarget':
@@ -48,16 +60,15 @@ class Room:
         elif msg_type == '-miss':
             pass
         elif msg_type == '-damage':
-            #context.battle.apply_damage(msg_data)
-            pass
+            self.context.battle.apply_damage(msg_data)
         elif msg_type == '-heal':
-            pass
+            self.context.battle.apply_heal(msg_data)
         elif msg_type == '-sethp':
-            pass
+            self.context.battle.apply_sethp(msg_data)
         elif msg_type == '-status':
-            pass
+            self.context.battle.apply_status(msg_data)
         elif msg_type == '-curestatus':
-            pass
+            self.context.battle.apply_curestatus(msg_data)
         elif msg_type == '-cureteam':
             pass
         elif msg_type == '-boost':
