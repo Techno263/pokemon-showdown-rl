@@ -1,5 +1,3 @@
-import json
-
 from pokemon_showdown_rl.battle_context import BattleContext
 from pokemon_showdown_rl.state.battle_state import turn
 from pokemon_showdown_rl.showdown.parse_msg import parse_player
@@ -11,23 +9,21 @@ class Room:
         self.context = BattleContext(username, turn)
 
     async def handle_msg(self, websocket, msg_type, msg_data):
-        if msg_type == 'request' and len(msg_data) > 0:
-            self.context.request = json.dumps(msg_data)
+        if msg_type == 'request':
+            self.context.apply_request(msg_data)
         elif msg_type == 'player':
-            player, username, _, _ = parse_player(msg_data)
-            if username == self.context.username:
-                self.context.player = player
+            self.context.apply_player(msg_data)
         elif msg_type == 'turn':
+            # make an action
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'win':
             # Do something to indicate the game is over
             pass
         elif msg_type == 'move':
             # TODO: Update state based on move
-            pass
+            self.context.apply_move(msg_data)
         elif msg_type == 'switch':
-            
-            pass
+            self.context.a
         elif msg_type == 'drag':
             #context.battle.apply_drag(msg_data)
             pass

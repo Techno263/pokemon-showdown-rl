@@ -1,4 +1,4 @@
-from pokemon_showdown_rl.showdown.parse_util import parse_user
+from pokemon_showdown_rl.showdown.parse_util import parse_user, parse_pokemon
 
 def parse_pm(msg_data):
     sender, receiver, msg = msg_data.split('|', 2)
@@ -16,7 +16,7 @@ def parse_move(msg_data):
 def parse_switch(msg_data):
     pokemon, details, hp_status = msg_data.split('|', 2)
     hp, status = hp_status.split(' ', 1)
-    pokemon_position, pokemon_name = pokemon.split(': ', 1)
+    player, position, name = parse_pokemon(pokemon)
     species, *details = details.split(', ') 
     shiny = False
     gender = ''
@@ -32,6 +32,6 @@ def parse_switch(msg_data):
             level = int(detail[1:])
     current_hp, max_hp = map(int, hp.split)
     return (
-        pokemon_position, pokemon_name, species, shiny, gender, level,
+        player, position, name, species, shiny, gender, level,
         current_hp, max_hp, status
     )

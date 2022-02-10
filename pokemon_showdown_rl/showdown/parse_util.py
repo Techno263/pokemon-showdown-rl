@@ -9,11 +9,10 @@ def parse_user(user):
     return rank, username
 
 def parse_pokemon(pokemon):
-    pos, name = pokemon.split(':')
-    player = pos[:2]
-    pos = pos[2]
-    name = name.strip()
-    return player, pos, name
+    position, name = pokemon.split(': ', 1)
+    player = position[:2]
+    position = position[2]
+    return player, position, name
 
 def parse_details(details):
     details = [s.strip() for s in details.split(',')]
