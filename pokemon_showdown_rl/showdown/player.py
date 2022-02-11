@@ -36,3 +36,27 @@ class Player:
     def set_status(self, position, status):
         pokemon = self.active[position]
         pokemon.status = status
+
+    def cure_status(self, position, status):
+        pokemon = self.active[position]
+        assert pokemon.status == status
+        pokemon.status = ''
+
+    def cure_team(self):
+        self.team.cure_team()
+
+    def boost(self, position, stat, amount):
+        pokemon = self.active[position]
+        pokemon.boost.boost(stat, amount)
+
+    def unboost(self, position, stat, amount):
+        pokemon = self.active[position]
+        pokemon.boost.unboost(stat, amount)
+
+    def set_boost(self, position, stat, amount):
+        pokemon = self.active[position]
+        pokemon.boost.set_boost(stat, amount)
+
+    def invert_boost(self, position):
+        pokemon = self.active[position]
+        pokemon.boost.invert()

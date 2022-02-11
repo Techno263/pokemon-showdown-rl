@@ -6,7 +6,7 @@ from pokemon_showdown_rl.state.client_state import join_lobby
 
 name = 'challstr'
 
-async def handle(context, websocket, msg_type, msg_data):
+async def handle(context, websocket, msg_type, msg_data, tags):
     if msg_type == 'challstr':
         context.challstr = msg_data
         await websocket.send('|/autojoin')

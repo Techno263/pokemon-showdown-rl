@@ -89,3 +89,43 @@ def parse_status(msg_data):
     pokemon, status = msg_data.split('|', 1)
     player, position, name = parse_pokemon(pokemon)
     return player, position, name, status
+
+def parse_curestatus(msg_data):
+    pokemon, status = msg_data.split('|', 1)
+    player, position, name = parse_pokemon(pokemon)
+    return player, position, name, status
+
+def parse_cureteam(msg_data):
+    player, position, name = parse_pokemon(msg_data)
+    return player, position, name
+
+def parse_boost(msg_data):
+    pokemon, stat, amount = msg_data.split('|', 2)
+    player, position, name = parse_pokemon(pokemon)
+    amount = int(amount)
+    return player, position, name, stat, amount
+
+def parse_unboost(msg_data):
+    return parse_boost(msg_data)
+
+def parse_setboost(msg_data):
+    return parse_boost(msg_data)
+
+def parse_swapboost(msg_data):
+    source, target_stats = msg_data.split('|', 1)
+    source_player, source_position, source_name = parse_pokemon(source)
+    if target_stats.find('|') >= 0:
+        target, stats = target_stats.split('|', 1)
+        stats = stats.split(', ')
+    else:
+        target = target_stats
+        stats = ['atk', 'def', 'spa', 'spd', 'spe', 'evasion', 'accuracy']
+    target_player, target_position, target_name = parse_pokemon(target)
+    return (
+        source_player, source_position, source_name, target_player,
+        target_position, target_name, stats
+    )
+
+def parse_invertboost(msg_data):
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name

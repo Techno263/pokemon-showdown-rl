@@ -1,5 +1,5 @@
 
 name = 'name_taken'
 
-async def handle(context, websocket, msg_type, msg_data):
+async def handle(context, websocket, msg_type, msg_data, tags):
     pass

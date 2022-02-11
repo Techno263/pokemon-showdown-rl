@@ -7,7 +7,7 @@ class Room:
         self.logger = logger
         self.context = BattleContext(username, self.logger)
 
-    async def handle_msg(self, websocket, msg_type, msg_data):
+    async def handle_msg(self, websocket, msg_type, msg_data, tags):
         if msg_type == 'title':
             self.context.battle.apply_title(msg_data)
         elif msg_type == 'request':
@@ -70,17 +70,17 @@ class Room:
         elif msg_type == '-curestatus':
             self.context.battle.apply_curestatus(msg_data)
         elif msg_type == '-cureteam':
-            pass
+            self.context.battle.apply_cureteam(msg_data)
         elif msg_type == '-boost':
-            pass
+            self.context.battle.apply_boost(msg_data)
         elif msg_type == '-unboost':
-            pass
+            self.context.battle.apply_unboost(msg_data)
         elif msg_type == '-setboost':
-            pass
+            self.context.battle.apply_setboost(msg_data)
         elif msg_type == '-swapboost':
-            pass
+            self.context.battle.apply_swapboost(msg_data)
         elif msg_type == '-invertboost':
-            pass
+            self.context.battle.apply_invertboost(msg_data)
         elif msg_type == '-clearboost':
             pass
         elif msg_type == '-clearallboost':

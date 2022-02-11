@@ -19,7 +19,7 @@ async def get_assertion_no_auth(challstr, username):
         ) as response:
             return await response.text()
 
-async def handle(context, websocket, msg_type, msg_data):
+async def handle(context, websocket, msg_type, msg_data, tags):
     if msg_type == 'init' and msg_data == 'chat':
         assertion = await get_assertion_no_auth(context.challstr, context.username)
         await websocket.send(f'|/trn {context.username},0,{assertion}')

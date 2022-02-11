@@ -7,7 +7,7 @@ from pokemon_showdown_rl.showdown.parse_msg import parse_pm
 
 name = 'lobby'
 
-async def handle(context, websocket, msg_type, msg_data):
+async def handle(context, websocket, msg_type, msg_data, tags):
     if msg_type == 'pm':
         _, challenger, _, _, msg = parse_pm(msg_data)
         # check if pm is a challenge

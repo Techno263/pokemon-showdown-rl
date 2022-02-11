@@ -22,3 +22,8 @@ class Team:
         )
         self.team.append(pokemon)
         return pokemon
+
+    def cure_team(self):
+        for p in self.team:
+            if p.status != '':
+                p.status = ''

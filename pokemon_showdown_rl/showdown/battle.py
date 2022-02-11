@@ -3,7 +3,9 @@ from pokemon_showdown_rl.showdown.rule import Rule
 from pokemon_showdown_rl.showdown.parse_msg import (
     parse_teamsize, parse_rule, parse_move, parse_switch, parse_drag,
     parse_detailschange, parse_replace, parse_swap, parse_faint,
-    parse_formechange, parse_damage, parse_heal, parse_sethp, parse_status
+    parse_formechange, parse_damage, parse_heal, parse_sethp, parse_status,
+    parse_curestatus, parse_cureteam, parse_boost, parse_unboost,
+    parse_setboost, parse_swapboost, parse_invertboost
 )
 
 class Battle:
@@ -104,9 +106,13 @@ class Battle:
         # Begin testing code
         pokemon = player.active[position]
         assert pokemon.name == name
-        assert pokemon.max_hp == max_hp
+        if max_hp != 0:
+            assert pokemon.max_hp == max_hp
         # End testing code
-        player.set_hp_status(position, current_hp, status)
+        if current_hp == 0:
+            player.set_hp(position, current_hp)
+        else:
+            player.set_hp_status(position, current_hp, status)
 
     def apply_heal(self, msg_data):
         (
@@ -116,9 +122,13 @@ class Battle:
         # Begin testing code
         pokemon = player.active[position]
         assert pokemon.name == name
-        assert pokemon.max_hp == max_hp
+        if max_hp != 0:
+            assert pokemon.max_hp == max_hp
         # End testing code
-        player.set_hp_status(position, current_hp, status)
+        if current_hp == 0:
+            player.set_hp(position, current_hp)
+        else:
+            player.set_hp_status(position, current_hp, status)
 
     def apply_sethp(self, msg_data):
         player, position, name, hp = parse_sethp(msg_data)
@@ -139,3 +149,60 @@ class Battle:
         player.set_status(position, status)
 
     def apply_curestatus(self, msg_data):
+        player, position, name, status = parse_curestatus(msg_data)
+        player = self.players[player]
+        # Begin testing code
+        pokemon = player.active[position]
+        assert pokemon.name == name
+        # End testing code
+        player.cure_status(position, status)
+
+    def apply_cureteam(self, msg_data):
+        player, position, name = parse_cureteam(msg_data)
+        player = self.players[player]
+        player.cure_team()
+
+    def apply_boost(self, msg_data):
+        player, position, name, stat, amount = parse_boost(msg_data)
+        player = self.players[player]
+        player.boost(position, stat, amount)
+
+    def apply_unboost(self, msg_data):
+        player, position, name, stat, amount = parse_unboost(msg_data)
+        player = self.players[player]
+        # Begin testing code
+        pokemon = player.active[position]
+        assert pokemon.name == name
+        # End testing code
+        player.unboost(position, stat, amount)
+
+    def apply_setboost(self, msg_data):
+        player, position, name, stat, amount = parse_setboost(msg_data)
+        player = self.players[player]
+        # Begin testing code
+        pokemon = player.active[position]
+        assert pokemon.name == name
+        # End testing code
+        player.set_boost(position, stat, amount)
+
+    def apply_swapboost(self, msg_data):
+        (
+            source_player_id, source_position, source_name, target_player_id,
+            target_position, target_name, stats
+        ) = parse_swapboost(msg_data)
+        source_player = self.players[source_player_id]
+        target_player = self.players[target_player_id]
+        source_pokemon = source_player.active[source_position]
+        target_pokemon = target_player.active[target_position]
+        assert source_pokemon.name == source_name
+        assert target_pokemon.name == target_name
+        source_pokemon.boost.swap(target_pokemon.boost, stats)
+
+    def apply_invertboost(self, msg_data):
+        player_id, position, name = parse_invertboost(msg_data)
+        player = self.players[player_id]
+        # Begin testing code
+        pokemon = player.active[position]
+        assert pokemon.name == name
+        # End testing code
+        player.invert_boost(position)

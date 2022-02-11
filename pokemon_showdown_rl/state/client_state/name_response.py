@@ -3,7 +3,7 @@ from pokemon_showdown_rl.showdown.parse_util import parse_user
 
 name = 'name_response'
 
-async def handle(context, websocket, msg_type, msg_data):
+async def handle(context, websocket, msg_type, msg_data, tags):
     if msg_type == 'nametaken':
         context.update_state(name_taken)
     elif msg_type == 'updateuser':

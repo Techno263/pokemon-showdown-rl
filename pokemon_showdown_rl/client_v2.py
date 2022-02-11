@@ -50,26 +50,32 @@ class Client:
                 continue
             if msg[0] == '|':
                 msg = msg[1:]
-                try:
-                    index = msg.index('|')
+                index = msg.find('|')
+                if index >= 0:
                     msg_type = msg[:index]
                     msg_data = msg[index + 1:]
-                except:
+                else:
                     msg_type = msg
                     msg_data = ''
+                msg_data, *tags_msgs = msg_data.split('|[')
+                tags = {}
+                for tag_msg in tags_msgs:
+                    tag_type, tag_data = tag_msg.split(']')
+                    tag_data = tag_data.lstrip()
+                    tags[tag_type] = tag_data
                 if room_id == None:
                     # message from lobby or global
-                    self.logger.info(f'RECV | lobby : {msg_type} - {msg_data}')
-                    await self.handle_msg(msg_type, msg_data)
+                    self.logger.info(f'RECV | lobby | {msg_type} | {msg_data}')
+                    await self.handle_msg(msg_type, msg_data, tags)
                 else:
                     # message from non-lobby and non-global room
-                    self.logger.info(f'RECV | {room_id} : {msg_type} - {msg_data}')
+                    self.logger.info(f'RECV | {room_id} | {msg_type} | {msg_data}')
                     room = self.get_room(room_id)
-                    await room.handle_msg(self.websocket_wrapper, msg_type, msg_data)
+                    await room.handle_msg(self.websocket_wrapper, msg_type, msg_data, tags)
 
-    async def handle_msg(self, msg_type, msg_data):
+    async def handle_msg(self, msg_type, msg_data, tags):
         await self.context.state.handle(
-            self.context, self.websocket_wrapper, msg_type, msg_data
+            self.context, self.websocket_wrapper, msg_type, msg_data, tags
         )
 
     async def run(self, url):
