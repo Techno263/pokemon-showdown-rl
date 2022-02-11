@@ -60,3 +60,11 @@ class Player:
     def invert_boost(self, position):
         pokemon = self.active[position]
         pokemon.boost.invert()
+
+    def clear_boost(self, position):
+        pokemon = self.active[position]
+        pokemon.boost.clear_boost()
+
+    def clear_all_boost(self):
+        for pokemon in self.active.values():
+            pokemon.boost.clear_boost()

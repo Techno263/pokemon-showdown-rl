@@ -5,7 +5,7 @@ from pokemon_showdown_rl.showdown.parse_msg import (
     parse_detailschange, parse_replace, parse_swap, parse_faint,
     parse_formechange, parse_damage, parse_heal, parse_sethp, parse_status,
     parse_curestatus, parse_cureteam, parse_boost, parse_unboost,
-    parse_setboost, parse_swapboost, parse_invertboost
+    parse_setboost, parse_swapboost, parse_invertboost, parse_clearboost
 )
 
 class Battle:
@@ -206,3 +206,19 @@ class Battle:
         assert pokemon.name == name
         # End testing code
         player.invert_boost(position)
+
+    def apply_clearboost(self, msg_data):
+        player_id, position, name = parse_clearboost(msg_data)
+        player = self.players[player_id]
+        # Begin testing code
+        pokemon = player.active[position]
+        assert pokemon.name == name
+        # End testing code
+        player.clear_boost(position)
+
+    def apply_clearallboost(self):
+        for player in self.players:
+            player.clear_all_boost()
+
+    def apply_clearpositiveboost(self, msg_data):
+        

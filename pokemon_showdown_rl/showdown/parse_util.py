@@ -38,11 +38,3 @@ def parse_hp_status(hp_status):
     else:
         current_hp, max_hp = map(int, hp.split('/'))
     return current_hp, max_hp, status
-
-'''
-def parse_damage(damage):
-    pokemon, hp_status = damage.split('|')
-    player, pos, name = parse_pokemon(pokemon)
-    current_hp, max_hp, status = parse_hp_status(hp_status)
-    return player, pos, name, current_hp, max_hp, status
-'''

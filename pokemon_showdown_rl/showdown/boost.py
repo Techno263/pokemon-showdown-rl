@@ -81,3 +81,12 @@ class Boost:
         self.speed = -self.speed
         self.evasion = -self.evasion
         self.accuracy = -self.accuracy
+
+    def clear(self):
+        self.attack = 0
+        self.defense = 0
+        self.special_defense = 0
+        self.special_defense = 0
+        self.speed = 0
+        self.evasion = 0
+        self.accuracy = 0

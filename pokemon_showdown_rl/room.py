@@ -82,11 +82,11 @@ class Room:
         elif msg_type == '-invertboost':
             self.context.battle.apply_invertboost(msg_data)
         elif msg_type == '-clearboost':
-            pass
+            self.context.battle.apply_clearboost(msg_data)
         elif msg_type == '-clearallboost':
-            pass
+            self.context.battle.apply_clearallboost()
         elif msg_type == '-clearpositiveboost':
-            pass
+            self.context.battle.apply_clearpositiveboost(msg_data)
         elif msg_type == '-clearnegativeboost':
             pass
         elif msg_type == '-copyboost':

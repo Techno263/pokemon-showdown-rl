@@ -127,5 +127,12 @@ def parse_swapboost(msg_data):
     )
 
 def parse_invertboost(msg_data):
-    player_id, position, name = parse_pokemon(pokemon)
+    player_id, position, name = parse_pokemon(msg_data)
     return player_id, position, name
+
+def parse_clearboost(msg_data):
+    player_id, position, name = parse_pokemon(msg_data)
+    return player_id, position, name
+
+def parse_clearpositiveboost(msg_data):
+    target, pokemon, effect = msg_data.split('|')
