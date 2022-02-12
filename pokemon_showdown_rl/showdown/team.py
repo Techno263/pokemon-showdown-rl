@@ -1,8 +1,14 @@
 from pokemon_showdown_rl.showdown.pokemon import Pokemon
+from dataclasses import dataclass, field
 
+@dataclass
 class Team:
+    team: list[Pokemon] = field(default_factory=list)
+
+    '''
     def __init__(self, team=[]):
         self.team = team
+    '''
 
     def get_pokemon(self, name, species, shiny, gender, level):
         for pokemon in self.team:

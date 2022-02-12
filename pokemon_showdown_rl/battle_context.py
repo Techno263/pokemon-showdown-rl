@@ -18,4 +18,4 @@ class BattleContext:
         player, username, avatar, rating = parse_player(msg_data)
         if username == self.username:
             self.player = player
-        self.battle.add_player()
+        self.battle.add_player(player, username, avatar, rating)

@@ -20,6 +20,11 @@ class Battle:
     def add_player(self, player, username, avatar, rating):
         self.players[player] = Player(username, avatar, rating)
 
+    def process_request(self, request):
+        player_id = request['side']['id']
+        player = self.players[player_id]
+        player.process_request(request)
+
     def apply_title(self, msg_data):
         self.title = msg_data
 
@@ -221,4 +226,4 @@ class Battle:
             player.clear_all_boost()
 
     def apply_clearpositiveboost(self, msg_data):
-        
+        pass

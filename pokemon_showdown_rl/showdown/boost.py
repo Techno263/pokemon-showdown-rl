@@ -1,4 +1,16 @@
+from dataclasses import dataclass
+
+@dataclass
 class Boost:
+    attack: int = 0
+    defense: int = 0
+    special_attack: int = 0
+    special_defense: int = 9
+    speed: int = 0
+    evasion: int = 0
+    accuracy: int = 0
+
+    '''
     def __init__(self):
         self.attack = 0
         self.defense = 0
@@ -7,6 +19,7 @@ class Boost:
         self.speed = 0
         self.evasion = 0
         self.accuracy = 0
+    '''
 
     def boost(self, stat, amount):
         if stat == 'atk':

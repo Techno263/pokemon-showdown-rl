@@ -9,12 +9,16 @@ def parse_pokemon(pokemon):
     position = position[2]
     return player, position, name
 
+def parse_pokemon_ident(ident):
+    player_id, name = ident.split(': ')
+    return player_id, name
+
 def parse_details(details):
     species, *details = details.split(', ')
     shiny = False
     gender = ''
     level = 100
-    for detail in details[1:]:
+    for detail in details:
         if detail == 'shiny':
             shiny = True
         elif detail == 'M':

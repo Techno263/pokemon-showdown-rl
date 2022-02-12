@@ -25,6 +25,7 @@ class Room:
         elif msg_type == 'rule':
             self.context.battle.apply_rule(msg_data)
         elif msg_type == 'turn':
+            # Look at request and validate/update game state
             # TODO: choose an action
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'win':
@@ -46,6 +47,7 @@ class Room:
             pass
         elif msg_type == 'faint':
             self.context.battle.apply_faint(msg_data)
+            # Look at request and validate/update game state
             # TODO: choose a new pokemon to switch to
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'error':
