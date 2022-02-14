@@ -2,19 +2,17 @@ from dataclasses import dataclass
 
 @dataclass
 class Stats:
-    attack: int = 0
-    defense: int = 0
-    special_attack: int = 0
-    special_defense: int = 0
-    speed: int = 0
-    initialized: bool = False
+    attack: int = None
+    defense: int = None
+    special_attack: int = None
+    special_defense: int = None
+    speed: int = None
 
-    def initialize(
-        self, attack, defense, special_attack, special_defense, speed
-    ):
-        self.attack = attack
-        self.defense = defense
-        self.special_attack = special_attack
-        self.special_defense = special_defense
-        self.speed = speed
-        self.initialized = True
+    def is_initialized(self):
+        return (
+            self.attack == None
+            or self.defense == None
+            or self.special_attack == None
+            or self.special_defense == None
+            or self.speed == None
+        )
