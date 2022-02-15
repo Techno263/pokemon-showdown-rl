@@ -127,4 +127,31 @@ class Player:
 
     def clear_all_boost(self):
         for pokemon in self.active.values():
-            pokemon.boost.clear_boost()
+            pokemon.boost.clear()
+
+    def clear_positive_boost(self, position):
+        pokemon = self.active[position]
+        pokemon.boost.clear_positive()
+
+    def clear_negative_boost(self, position):
+        pokemon = self.active[position]
+        pokemon.boost.clear_negative()
+
+    def start_effect(self, position, effect):
+        pokemon = self.active[position]
+        # TODO: apply effect to pokemon
+
+    def end_effect(self, position, effect):
+        pokemon = self.active[position]
+        # TODO: end effect on pokemon
+
+    def update_item(self, position, item):
+        pokemon = self.active[position]
+        pokemon.item = item
+
+    def remove_item(self, position, item):
+        pokemon = self.active[position]
+        if pokemon.item == item:
+            pokemon.item = ''
+        else:
+            raise Exception('Tried to remove item that pokemon does not have')

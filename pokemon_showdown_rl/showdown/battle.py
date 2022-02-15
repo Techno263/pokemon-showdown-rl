@@ -16,6 +16,8 @@ class Battle:
         self.tier = ''
         self.rules = []
         self.players = {}
+        self.weather = 'none'
+        self.field_condition = ''
 
     def add_player(self, player, username, avatar, rating):
         self.players[player] = Player(username, avatar, rating)
@@ -226,4 +228,65 @@ class Battle:
             player.clear_all_boost()
 
     def apply_clearpositiveboost(self, msg_data):
-        pass
+        (
+            target_id, target_position, target_name, player_id, position, name, effect
+        ) = parse_clearpositiveboost(msg_data)
+        player = self.players[target_id]
+        player.clear_positive_boost(target_position)
+
+    def apply_clearnegativeboost(self, msg_data):
+        player_id, position, name = parse_clearnegativeboost(msg_data)
+        player = self.players[player_id]
+        player.clear_negativeboost(position)
+
+    def apply_copyboost(self, msg_data):
+        (
+            source_id, source_pos, source_name, target_id, target_pos,
+            target_name
+        ) = parse_copyboost
+        source_player = self.players[source_id]
+        target_player = self.players[target_id]
+        source_pokemon = source_player.active[source_pos]
+        target_pokemon = target_player.active[target_pos]
+        target_pokemon.boost.copy_from(source_pokemon.boost)
+
+    def apply_weather(self, msg_data):
+        weather = parse_weather(msg_data)
+        self.weather = weather
+
+    def apply_fieldstart(self, msg_data):
+        field_condition = parse_fieldstart(msg_data)
+        self.field_condition = field_condition
+
+    def apply_fieldend(self, msg_data):
+        field_condition = parse_fieldend(msg_data)
+        if self.field_condition == field_condition:
+            self.field_condition = ''
+
+    def apply_sidestart(self, msg_data):
+        side, condition = parse_sidestart(msg_data)
+        # TODO: apply condition to side
+    
+    def apply_sideend(self, msg_data):
+        side, condition = parse_Sideend(msg_data)
+        # TODO: remove given condition from side
+
+    def apply_start(self, msg_data):
+        player_id, position, name, effect = parse_start(msg_data)
+        player = self.players[player_id]
+        player.start_effect(position, effect)
+
+    def apply_end(self, msg_data):
+        player_id, position, name, effect = parse_end(msg_data)
+        player = self.players[player_id]
+        player.end_effect(position, effect)
+
+    def apply_item(self, msg_data):
+        player_id, position, name, item = parse_item(msg_data)
+        player = self.players[player_id]
+        player.update_item(position, item)
+
+    def apply_enditem(self, msg_data):
+        player_id, position, name, item = parse_enditem(msg_data)
+        player = self.players[player_id]
+        player.remove_item(position, item)

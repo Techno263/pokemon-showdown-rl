@@ -103,3 +103,44 @@ class Boost:
         self.speed = 0
         self.evasion = 0
         self.accuracy = 0
+
+    def clear_positive(self):
+        if self.attack > 0:
+            self.attack = 0
+        if self.defense > 0:
+            self.defense = 0
+        if self.special_attack > 0:
+            self.special_attack = 0
+        if self.special_defense > 0:
+            self.special_defense = 0
+        if self.speed > 0:
+            self.speed = 0
+        if self.evasion > 0:
+            self.evasion = 0
+        if self.accuracy > 0:
+            self.accuracy = 0
+
+    def clear_negative(self):
+        if self.attack < 0:
+            self.attack = 0
+        if self.defense < 0:
+            self.defense = 0
+        if self.special_attack < 0:
+            self.special_attack = 0
+        if self.special_defense < 0:
+            self.special_defense = 0
+        if self.speed < 0:
+            self.speed = 0
+        if self.evasion < 0:
+            self.evasion = 0
+        if self.accuracy < 0:
+            self.accuracy = 0
+
+    def copy_from(self, boost):
+        self.attack = boost.attack
+        self.defense = boost.defense
+        self.special_attack = boost.special_attack
+        self.special_defense = boost.special_defense
+        self.speed = boost.speed
+        self.evasion = boost.evasion
+        self.accuracy = boost.accuracy

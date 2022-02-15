@@ -136,3 +136,50 @@ def parse_clearboost(msg_data):
 
 def parse_clearpositiveboost(msg_data):
     target, pokemon, effect = msg_data.split('|')
+    target_id, target_position, target_name = parse_pokemon(target)
+    player_id, position, name = parse_pokemon(pokemon)
+    return (
+        target_id, target_position, target_name, player_id, position, name, effect
+    )
+
+def parse_clearnegativeboost(msg_data):
+    player_id, position, name = parse_pokemon(msg_data)
+    return player_id, position, name
+
+def parse_copyboost(msg_data):
+    source, target = msg_data.split('|')
+    source_id, source_pos, source_name = parse_pokemon(source)
+    target_id, target_pos, target_name = parse_pokemon(target)
+    return source_id, source_pos, source_name, target_id, target_pos, target_name
+
+def parse_weather(msg_data):
+    return msg_data
+
+def parse_fieldstart(msg_data):
+    return msg_data
+
+def parse_fieldend(msg_data):
+    return parse_fieldstart(msg_data)
+
+def parse_sidestart(msg_data):
+    side, condition = msg_data.split('|', 1)
+    return side, condition
+
+def parse_sideend(msg_data):
+    return parse_sidestart(msg_data)
+
+def parse_start(msg_data):
+    pokemon, effect = msg_data.split('|', 1)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, effect
+
+def parse_end(msg_data):
+    return parse_start(msg_data)
+
+def parse_item(msg_data):
+    pokemon, item = msg_data.split('|', 1)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, item
+
+def parse_enditem(msg_data):
+    return parse_item(msg_data)
