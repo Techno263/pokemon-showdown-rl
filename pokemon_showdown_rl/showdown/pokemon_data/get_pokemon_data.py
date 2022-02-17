@@ -17,13 +17,19 @@ item_url = r'https://www.smogon.com/dex/_rpc/dump-item'
 ability_url = r'https://www.smogon.com/dex/_rpc/dump-ability'
 
 
-alpha_re = re.compile(r'[^a-zA-z\-]')
+alpha_re = re.compile(r'[^a-zA-z0-9\-]')
 
 
 def name_to_alias(name):
     name = name.replace(' ', '-')
     name = re.sub(alpha_re, '', name)
     return name
+
+
+def handle_null_pokemon_resp(alias):
+    if '-mega' in alias:
+        return alias.replace('-mega', '')
+
 
 def is_pokemon_valid(pokemon_data):
     return pokemon_data['isNonstandard'] == 'Standard'
@@ -38,8 +44,9 @@ async def get_pokemon_data(session, gen, pokemon_data):
     async with session.post(pokemon_url, json=post_json) as resp:
         r_data = await resp.json()
     if r_data is None:
-        print(post_json['alias'], r_data is None)
-        return None
+        r_data = {
+            'learnset': []
+        }
     oob = pokemon_data['oob']
     if oob is None:
         oob = {
@@ -48,6 +55,11 @@ async def get_pokemon_data(session, gen, pokemon_data):
             'alts': [],
             'genfamily': []
         }
+    assert len(set(pokemon_data['types'])) == len(pokemon_data['types'])
+    assert len(set(pokemon_data['abilities'])) == len(pokemon_data['abilities'])
+    assert len(set(r_data['learnset'])) == len(r_data['learnset'])
+    assert len(set(oob['evos'])) == len(oob['evos'])
+    assert len(set(oob['alts'])) == len(oob['alts'])
     return {
         'name': pokemon_data['name'],
         'dex_num': oob['dex_number'],
@@ -63,8 +75,7 @@ async def get_pokemon_data(session, gen, pokemon_data):
         'abilities': pokemon_data['abilities'],
         'learnset': r_data['learnset'],
         'evos': oob['evos'],
-        'alts': oob['alts'],
-        'gens': oob['genfamily']
+        'alts': oob['alts']
     }
 
 
@@ -74,11 +85,16 @@ def is_move_valid(move_data):
 
 async def get_move_data(session, gen, move_data):
     post_json = {
-        'alias': move_data['name'].lower(),
+        'alias': name_to_alias(move_data['name'].lower()),
         'gen': gen.lower()
     }
     async with session.post(move_url, json=post_json) as resp:
         r_data = await resp.json()
+    # This assert is to check if move flags is being used for something
+    # Historically it has always been empty, and I want to know when/if it is
+    #   used for something in the future
+    assert len(move_data['flags']) == 0, 'move flags has values'
+    assert len(set(r_data['pokemon'])) == len(r_data['pokemon'])
     return {
         'name': move_data['name'],
         'category': move_data['category'],
@@ -87,20 +103,9 @@ async def get_move_data(session, gen, move_data):
         'priority': move_data['priority'],
         'pp': move_data['pp'],
         'type': move_data['type'],
-        'flags': move_data['flags'],
-        'gens': move_data['genfamily'],
         'pokemon': r_data['pokemon']
     }
 
-
-async def get_ability_data(session, gen, ability_data):
-    post_json = {
-        'alias': ability_data['name'].lower(),
-        'gen': gen.lower()
-    }
-    async with session.post(ability_url, json=post_json) as resp:
-        r_data = await resp.json()
-    
 
 def is_item_valid(item_data):
     return item_data['isNonstandard'] == 'Standard'
@@ -108,15 +113,14 @@ def is_item_valid(item_data):
 
 async def get_item_data(session, gen, item_data):
     post_json = {
-        'alias': item_data['name'].lower(),
+        'alias': name_to_alias(item_data['name'].lower()),
         'gen': gen.lower()
     }
     async with session.post(item_url, json=post_json) as resp:
         r_data = await resp.json()
     return {
         'name': item_data['name'],
-        'gens': item_data['genfamily'],
-        'pokemon': r_data['pokemon']
+        'pokemon': sorted(set(r_data['pokemon']))
     }
 
 
@@ -134,7 +138,6 @@ async def get_gen_data(session, gen_num, gen_data):
         for pokemon in r_data['pokemon']
         if is_pokemon_valid(pokemon)
     ]
-    '''
     move_awaits = [
         get_move_data(session, gen, move)
         for move in r_data['moves']
@@ -147,25 +150,30 @@ async def get_gen_data(session, gen_num, gen_data):
     ]
     ability_data = [
         {
-            'name': ability['name'],
-            'gens': ability['genfamily']
+            'name': ability['name']
         }
         for ability in r_data['abilities']
         if is_ability_valid(ability)
     ]
-    '''
+    type_data = [
+        {
+            'name': type_info['name'],
+            'atk_eff': type_info['atk_effectives']
+        }
+        for type_info in r_data['types']
+    ]
     pokemon_data = await asyncio.gather(*pokemon_awaits)
-    pokemon_data = [p for p in pokemon_data if p is not None]
-    #move_data = await asyncio.gather(*move_awaits)
-    #item_data = await asyncio.gather(*item_awaits)
+    move_data = await asyncio.gather(*move_awaits)
+    item_data = await asyncio.gather(*item_awaits)
     return {
         'gen': gen,
         'num': gen_num,
         'name': gen_data['name'],
         'pokemon': pokemon_data,
-        #'moves': move_data,
-        #'items': item_data,
-        #'abilities': ability_data
+        'moves': move_data,
+        'abilities': ability_data,
+        'items': item_data,
+        'types': type_data
     }
 
 
@@ -182,7 +190,7 @@ async def get_data():
             gen_num = data['num']
             gen = data['gen'].lower()
             filename = f'gen{gen_num}_{gen}.json'
-            json_str = json.dumps(data)
+            json_str = json.dumps(data, separators=(',', ':'))
             full_filename = path.join(dirname, filename)
             async with aiofiles.open(full_filename, 'wt') as fp:
                 await fp.write(json_str)
