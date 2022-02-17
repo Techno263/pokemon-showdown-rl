@@ -16,6 +16,7 @@ class Pokemon:
     boost: Boost = field(init=False, default=Boost())
     stats: Stats = field(init=False, default=Stats())
     moves: list[Move] = field(init=False, default_factory=list)
+    item: str = None
 
     '''
     def __init__(self, name, species, shiny, gender, level, current_hp, max_hp, status):

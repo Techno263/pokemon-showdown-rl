@@ -90,35 +90,41 @@ class Room:
         elif msg_type == '-clearpositiveboost':
             self.context.battle.apply_clearpositiveboost(msg_data)
         elif msg_type == '-clearnegativeboost':
-            pass
+            self.context.battle.apply_clearnegativeboost(msg_data)
         elif msg_type == '-copyboost':
-            pass
+            self.context.battle.apply_copyboost(msg_data)
         elif msg_type == '-weather':
-            pass
+            self.context.battle.apply_weather(msg_data)
         elif msg_type == '-fieldstart':
-            pass
+            self.context.battle.apply_fieldstart(msg_data)
         elif msg_type == '-fieldend':
-            pass
+            self.context.battle.apply_fieldend(msg_data)
         elif msg_type == '-sidestart':
-            pass
+            self.context.battle.apply_sidestart(msg_data)
         elif msg_type == '-sideend':
-            pass
+            self.context.battle.apply_sideend(msg_data)
         elif msg_type == '-start':
-            pass
+            self.context.battle.apply_start(msg_data)
         elif msg_type == '-end':
-            pass
+            self.context.battle.apply_end(msg_data)
         elif msg_type == '-crit':
             pass
         elif msg_type == '-supereffective':
+            # TODO: find a way to have this represented/stored
+            # so it can be used to increase reward
             pass
         elif msg_type == '-resisted':
+            # TODO: find a way to have this represented/stored
+            # so it can be used to decrease reward
             pass
         elif msg_type == '-immune':
+            # TODO: find a way to have this represented/stored
+            # so it can be used to decrease reward
             pass
         elif msg_type == '-item':
-            pass
+            self.context.battle.apply_item(msg_data)
         elif msg_type == '-enditem':
-            pass
+            self.context.battle.apply_enditem(msg_data)
         elif msg_type == '-ability':
             pass
         elif msg_type == '-endability':
