@@ -25,7 +25,6 @@ class Room:
         elif msg_type == 'rule':
             self.context.battle.apply_rule(msg_data)
         elif msg_type == 'turn':
-            # Look at request and validate/update game state
             # TODO: choose an action
             await websocket.send(f'{self.room_id}|/choose default')
         elif msg_type == 'win':
@@ -126,17 +125,17 @@ class Room:
         elif msg_type == '-enditem':
             self.context.battle.apply_enditem(msg_data)
         elif msg_type == '-ability':
-            pass
+            self.context.battle.apply_ability(msg_data)
         elif msg_type == '-endability':
-            pass
+            self.context.battle.apply_endability(msg_data)
         elif msg_type == '-transform':
-            pass
+            self.context.battle.apply_transform(msg_data)
         elif msg_type == '-mega':
-            pass
+            self.context.battle.apply_mega(msg_data)
         elif msg_type == '-primal':
-            pass
+            self.context.battle.apply_primal(msg_data)
         elif msg_type == '-burst':
-            pass
+            self.context.battle.apply_burst(msg_data)
         elif msg_type == '-zpower':
             pass
         elif msg_type == '-zbroken':

@@ -13,23 +13,13 @@ class Pokemon:
     current_hp: int
     max_hp: int
     status: str
-    boost: Boost = field(init=False, default=Boost())
-    stats: Stats = field(init=False, default=Stats())
+    boost: Boost = field(init=False, default_factory=Boost)
+    stats: Stats = field(init=False, default_factory=Stats)
     moves: list[Move] = field(init=False, default_factory=list)
-    item: str = None
+    item: str = field(init=False, default_factory=str)
+    ability: str = field(init=False, default=None)
+    transform: Pokemon = field(init=False, default=None)
 
-    '''
-    def __init__(self, name, species, shiny, gender, level, current_hp, max_hp, status):
-        self.name = name
-        self.species = species
-        self.shiny = shiny
-        self.gender = gender
-        self.level = level
-        self.current_hp = current_hp
-        self.max_hp = max_hp
-        self.status = status
-        self.boost = Boost()
-    '''
 
     def initialize_moves(self, moves):
         if len(moves) == 0:
@@ -42,6 +32,8 @@ class Pokemon:
             ]
         else:
             raise Exception('Moves already initialized')
+
+    def add_move(self, name)
 
     def get_move(self, move_id):
         for m in self.moves:

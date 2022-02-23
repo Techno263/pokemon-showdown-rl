@@ -1,6 +1,9 @@
+import json
+
 from pokemon_showdown_rl.showdown.parse_util import (
     parse_user, parse_pokemon, parse_hp_status, parse_details
 )
+
 
 def parse_pm(msg_data):
     sender, receiver, msg = msg_data.split('|', 2)
@@ -11,6 +14,11 @@ def parse_pm(msg_data):
 def parse_player(msg_data):
     player, username, avatar, rating = msg_data.split('|', 3)
     return player, username, avatar, rating
+
+def parse_request(msg_data):
+    if len(msg_data) > 0:
+        return json.dumps(msg_data)
+    return None
 
 def parse_teamsize(msg_data):
     player, teamsize = msg_data.split('|', 1)
@@ -183,3 +191,31 @@ def parse_item(msg_data):
 
 def parse_enditem(msg_data):
     return parse_item(msg_data)
+
+def parse_ability(msg_data):
+    pokemon, ability = msg_data.split('|', 1)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, ability
+
+def parse_endability(msg_data):
+    player_id, position, name = parse_pokemon(msg_data)
+    return player_id, position, name
+
+def parse_transform(msg_data):
+    pokemon, species = msg_data.split('|', 1)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, species
+
+def parse_mega(msg_data):
+    pokemon, mega_stone = msg_data.split('|', 1)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, mega_stone
+
+def parse_primal(msg_data):
+    player_id, position, name = parse_pokemon(msg_data)
+    return player_id, position, name
+
+def parse_burst(msg_data):
+    pokemon, species, item = msg_data.split('|', 2)
+    player_id, position, name = parse_pokemon(pokemon)
+    return player_id, position, name, species, item

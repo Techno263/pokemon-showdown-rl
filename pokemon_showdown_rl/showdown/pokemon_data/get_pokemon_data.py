@@ -149,9 +149,7 @@ async def get_gen_data(session, gen_num, gen_data):
         if is_item_valid(item)
     ]
     ability_data = [
-        {
-            'name': ability['name']
-        }
+        ability['name']
         for ability in r_data['abilities']
         if is_ability_valid(ability)
     ]

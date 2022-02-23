@@ -1,3 +1,5 @@
+import pokemon_showdown_rl.showdown.parse_util as parse_util
+
 from pokemon_showdown_rl.showdown.team import Team
 from pokemon_showdown_rl.showdown.parse_util import (
     parse_pokemon_ident, parse_details, parse_hp_status
@@ -13,15 +15,18 @@ class Player:
     teamsize: int = field(init=False, default=0)
     active: dict = field(init=False, default_factory=dict)
 
-    '''
-    def __init__(self, username, avatar, rating, team=[]):
-        self.username = username
-        self.avatar = avatar
-        self.rating = rating
-        self.teamsize = 0
-        self.team = Team(team)
-        self.active = {}
-    '''
+    def initialize_from_request(self, request):
+        side = request['side']
+        assert side['name'] == self.username
+        assert len(side['pokemon']) == self.teamsize
+        for p in side['pokemon']:
+            _, name = parse_pokemon_ident(p['ident'])
+            species, shiny, gender, level = parse_details(p['details'])
+            current_hp, max_hp, status = parse_hp_status(p['condition'])
+            pokemon = self.team.add_pokemon(
+                name, species, shiny, gender, level, current_hp, max_hp, status
+            )
+            pokemon.add_move()
 
     def process_request(self, request):
         side = request['side']
@@ -34,13 +39,10 @@ class Player:
                 name, species, shiny, gender, level
             )
             current_hp, max_hp, status = parse_hp_status(p['condition'])
+            assert pokemon.current_hp == current_hp
+            assert pokemon.status == status
             if current_hp != 0:
-                assert pokemon.current_hp == current_hp
                 assert pokemon.max_hp == max_hp
-                assert pokemon.status == status
-            else:
-                assert pokemon.current_hp == current_hp
-                assert pokemon.status == status
             stats = p['stats']
             if not pokemon.stats.initialized:
                 pokemon.stats.initialize(
@@ -155,3 +157,27 @@ class Player:
             pokemon.item = ''
         else:
             raise Exception('Tried to remove item that pokemon does not have')
+
+    def set_ability(self, position, ability):
+        pokemon = self.active[position]
+        pokemon.ability = ability
+
+    def transform(self, position, species):
+        pokemon = self.active[position]
+        # TODO: Get pokemon stats/info from species name and assigne it to
+        # transform
+        pokemon.transform = None
+
+    def mega_evolve(self, position, mega_stone):
+        pokemon = self.active[position]
+        # TODO: swap pokemon to mega evolved form
+        # self.active[position] = mega_pokemon
+
+    def primal_reversion(self, position):
+        pokemon = self.active[position]
+        # TODO: swap to primal form
+        # self.active[position] = primal_pokemon
+
+    def ultra_burst(self, position, species, item):
+        pokemon = self.active[position]
+        # TODO: swap pokemon to ultra burst form

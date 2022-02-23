@@ -5,8 +5,13 @@ from pokemon_showdown_rl.showdown.parse_msg import (
     parse_detailschange, parse_replace, parse_swap, parse_faint,
     parse_formechange, parse_damage, parse_heal, parse_sethp, parse_status,
     parse_curestatus, parse_cureteam, parse_boost, parse_unboost,
-    parse_setboost, parse_swapboost, parse_invertboost, parse_clearboost
+    parse_setboost, parse_swapboost, parse_invertboost, parse_clearboost,
+    parse_clearpositiveboost, parse_clearnegativeboost, parse_copyboost,
+    parse_weather, parse_fieldstart, parse_fieldend, parse_sidestart,
+    parse_sideend, parse_start, parse_end, parse_item, parse_enditem,
+    parse_ability
 )
+import pokemon_showdown_rl.showdown.parse_msg as parse
 
 class Battle:
     def __init__(self):
@@ -55,6 +60,7 @@ class Battle:
             target_name, tags
         ) = parse_move(msg_data)
         player = self.players[player]
+        player.use_move(position, move)
         # TODO: Update pokemon state with the knowledge of this move
 
     def apply_switch(self, msg_data):
@@ -290,3 +296,37 @@ class Battle:
         player_id, position, name, item = parse_enditem(msg_data)
         player = self.players[player_id]
         player.remove_item(position, item)
+
+    def apply_ability(self, msg_data):
+        player_id, position, name, ability = parse_ability(msg_data)
+        player = self.players[player_id]
+        player.set_ability(position, ability)
+
+    def apply_endability(self, msg_data):
+        player_id, position, name = parse.parse_endability(msg_data)
+        player = self.players[player_id]
+        player.set_ability(position, '')
+
+    def apply_transform(self, msg_data):
+        player_id, position, name, species = parse.parse_transform(msg_data)
+        player = self.players[player_id]
+        player.transform(position, species)
+
+    def apply_mega(self, msg_data):
+        player_id, position, name, mega_stone = parse.parse_mega(msg_data)
+        player = self.players[player_id]
+        player.mega_evolve(position, mega_stone)
+
+    def apply_primal(self, msg_data):
+        player_id, position, name = parse.parse_primal(msg_data)
+        player = self.players[player_id]
+        player.primal_reversion(position)
+
+    def apply_burst(self, msg_data):
+        player_id, position, name, species, item = parse.parse_burst(msg_data)
+        player = self.players[player_id]
+        player.ultra_burst(position, species, item)
+
+    def apply_activate(self, msg_data):
+        # TODO: handle effect from activate
+        pass

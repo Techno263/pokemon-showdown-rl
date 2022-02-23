@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
+@dataclass
 class Move:
     name: str
     move_id: str
