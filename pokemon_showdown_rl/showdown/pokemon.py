@@ -18,7 +18,7 @@ class Pokemon:
     moves: list[Move] = field(init=False, default_factory=list)
     item: str = field(init=False, default_factory=str)
     ability: str = field(init=False, default=None)
-    transform: Pokemon = field(init=False, default=None)
+    transform: 'Pokemon' = field(init=False, default=None)
 
 
     def initialize_moves(self, moves):
@@ -33,7 +33,9 @@ class Pokemon:
         else:
             raise Exception('Moves already initialized')
 
-    def add_move(self, name)
+    def add_move(self, name):
+        # TODO: implement
+        pass
 
     def get_move(self, move_id):
         for m in self.moves:

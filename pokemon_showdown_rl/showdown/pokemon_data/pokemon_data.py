@@ -1,8 +1,11 @@
 import os.path as path
+import json
 
 from enum import IntEnum
 from dataclasses import dataclass
-
+from pokemon_showdown_rl.showdown.pokemon_data.pokemon_entry import PokemonEntry
+from pokemon_showdown_rl.showdown.pokemon_data.move_entry import MoveEntry
+from pokemon_showdown_rl.showdown.pokemon_data.item_entry import ItemEntry
 
 dirname = path.dirname(__file__)
 
@@ -101,7 +104,7 @@ def _pokemon_data_object_hook(json_data):
 def get_pokemon_data(gen):
     filename = get_data_filename(gen)
     with open(filename, 'rt') as fp:
-        return json.load(fp)
+        return json.load(fp, object_hook=_pokemon_data_object_hook)
 
 
 @dataclass
@@ -115,10 +118,14 @@ class PokemonData:
     items: list
     types: list
 
-    @static_method
+    @staticmethod
     def from_json(json_data):
         return PokemonData(
             json_data['num'], json_data['name'], json_data['gen'],
             json_data['pokemon'], json_data['moves'], json_data['abilities'],
             json_data['items'], json_data['types']
         )
+
+if __name__ == '__main__':
+    x = get_pokemon_data(PokemonGen.GEN_1)
+    print(x)
