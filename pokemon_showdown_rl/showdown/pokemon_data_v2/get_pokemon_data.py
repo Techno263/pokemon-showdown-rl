@@ -94,8 +94,30 @@ async def get_showdown_team_builder(session):
     start_text = "// DO NOT EDIT - automatically built with build-tools/build-indexes\n\nexports.BattleTeambuilderTable = JSON.parse"
     js_wrapper = 'JSON.stringify(JSON.parse{});'
     json_data = await scrape_json_data(resp_text, start_text, '(', ')', js_wrapper)
+    base_mod = await get_showdown_base_mod(session)
+    base_mod_keys = {
+        'tiers', 'items', 'overrideTier', 'zuBans', 'monotypeBans', 'formatSlices',
+        'learnsets'
+    }
+    mods = {
+        'base': base_mod,
+        'base_mod': {
+            'tiers': json_data['tiers'],
+            'items': json_data['items'],
+            'overrideTier': json_data['overrideTier'],
+            'zuBans': json_data['zuBans'],
+            'monotypeBans': json_data['monotypeBans'],
+            'formatSlices': json_data['formatSlices'],
+            'learnsets': json_data['learnsets'],
+        },
+        'mods': {
+            k: v
+            for k, v in json_data.items()
+            if k not in base_mod_keys
+        }
+    }
     with open(dp.team_builder_path, 'wt', encoding='utf8') as fp:
-        json.dump(json_data, fp, separators=(',', ':'))
+        json.dump(mods, fp, separators=(',', ':'))
 
 
 async def get_showdown_learnset(session):
@@ -198,13 +220,20 @@ async def get_showdown_formats_data(session):
         json.dump(json_data, fp, separators=(',', ':'))
 
 
+# conversion copied from
+# https://github.com/smogon/pokemon-showdown-client/blob/623a2902d0e4c352e68d550c0af2642bea2b2425/src/battle-dex.ts#L35
+def format_name_to_format_id(format_name):
+    pattern = re.compile(r'[^a-z0-9]+', )
+    return pattern.sub('', format_name.lower())
+
+
 async def get_showdown_formats(session):
     async with session.get(showdown_formats_url) as resp:
         resp_text = await resp.text()
     start_text = 'exports.Formats = '
     js_wrapper = 'JSON.stringify({});'
     json_data = await scrape_json_data(resp_text, start_text, '[', ']', js_wrapper)
-    format_data = []
+    format_data = {}
     section = ''
     for item in json_data:
         if 'section' in item:
@@ -228,7 +257,9 @@ async def get_showdown_formats(session):
                 'unbanlist': item.get('unbanlist', []),
                 'restricted': item.get('restricted', [])
             }
-            format_data.append(showdown_format)
+            format_id = format_name_to_format_id(item['name'])
+            assert format_id not in format_data
+            format_data[format_id] = showdown_format
     with open(dp.formats_path, 'wt', encoding='utf8') as fp:
         json.dump(format_data, fp, separators=(',', ':'))
 
