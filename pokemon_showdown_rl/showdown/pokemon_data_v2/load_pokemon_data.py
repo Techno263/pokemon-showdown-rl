@@ -59,3 +59,5 @@ def load_team_builder():
 
 
 def load_typechart_builder():
+    with open(dp.typechart_path, 'rt') as fp:
+        return json.load(fp, object_hook=json_object_hook)

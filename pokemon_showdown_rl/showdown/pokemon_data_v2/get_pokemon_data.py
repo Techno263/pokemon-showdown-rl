@@ -77,6 +77,25 @@ async def scrape_json_data(
     return json_data
 
 
+def parse_sectioned_list(section_list, section_label):
+    section = ''
+    output = {}
+    for item in section_list:
+        if isinstance(item, list) and item[0] == section_label:
+            assert len(item) == 2
+            section = item[1]
+        else:
+            output[item] = section
+    return output
+
+
+def listify_checked_dict(checked_dict):
+    assert all(v == 1 for v in checked_dict.values())
+    values = sorted(set(checked_dict.keys()))
+    assert len(values) == len(checked_dict.keys())
+    return values
+
+
 async def get_showdown_pokedex(session):
     # Reqeust pokedex data
     async with session.get(showdown_pokedex_url) as resp:
@@ -102,20 +121,31 @@ async def get_showdown_team_builder(session):
     mods = {
         'base': base_mod,
         'base_mod': {
-            'tiers': json_data['tiers'],
-            'items': json_data['items'],
+            'tiers': parse_sectioned_list(json_data['tiers'], 'header'),
+            'items': parse_sectioned_list(json_data['items'], 'header'),
             'overrideTier': json_data['overrideTier'],
-            'zuBans': json_data['zuBans'],
-            'monotypeBans': json_data['monotypeBans'],
-            'formatSlices': json_data['formatSlices'],
+            'zuBans': listify_checked_dict(json_data['zuBans']),
+            'monotypeBans': listify_checked_dict(json_data['monotypeBans']),
             'learnsets': json_data['learnsets'],
-        },
-        'mods': {
-            k: v
-            for k, v in json_data.items()
-            if k not in base_mod_keys
         }
     }
+    mods_data = {}
+    for k, v in json_data.items():
+        if k in base_mod_keys:
+            continue
+        if 'formatSlices' in v:
+            del v['formatSlices']
+        if 'tiers' in v:
+            v['tiers'] = parse_sectioned_list(v['tiers'], 'header')
+        if 'items' in v:
+            v['items'] = parse_sectioned_list(v['items'], 'header')
+        if 'zuBans' in v:
+            v['zuBans'] = listify_checked_dict(v['zuBans'])
+        if 'monotypeBans' in v:
+            v['monotypeBans'] = listify_checked_dict(v['monotypeBans'])
+            
+        mods_data[k] = v
+    mods['mods'] = mods_data
     with open(dp.team_builder_path, 'wt', encoding='utf8') as fp:
         json.dump(mods, fp, separators=(',', ':'))
 
